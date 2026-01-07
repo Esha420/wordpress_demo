@@ -12,6 +12,8 @@ services:
       WORDPRESS_DB_NAME: wpdb
     depends_on:
       - db
+    volumes:
+      - wordpress_data:/var/www/html
 
   db:
     image: mysql:8.0
@@ -23,5 +25,24 @@ services:
     volumes:
       - db_data:/var/lib/mysql
 
+  n8n:
+    image: n8nio/n8n:latest
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=admin123
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - NODE_ENV=production
+      - TZ=Asia/Kathmandu
+    volumes:
+      - n8n_data:/home/node/.n8n
+    restart: unless-stopped
+
 volumes:
   db_data:
+  wordpress_data:
+  n8n_data:
